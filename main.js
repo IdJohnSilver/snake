@@ -1,22 +1,102 @@
 let canvas = document.getElementById("canvas")
 let ctx = canvas.getContext("2d")
-let cWidth = canvas.width;
-let cHeight = canvas.height;
+let cWidth;
+let cHeight;
+let snake;
+let apple;
+let game;
+let gameSize = [30, 20];
+let blockSize = 20;
+let score = 0;
 
-let snake1 = new Snake(cWidth / 2, cHeight / 2, '#00cc44');
+function setGameSize() {
+    cWidth = canvas.width;
+    cHeight = canvas.height;
+}
+
+function drawBorder() {
+    for (let x = 0; x <= gameSize[0]; x++) {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(x * blockSize, 0, blockSize, blockSize);
+        ctx.fillRect(x * blockSize, gameSize[1] * blockSize, blockSize, blockSize);
+    }
+
+    for (let y = 0; y <= gameSize[1]; y++) {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, y * blockSize, blockSize, blockSize);
+        ctx.fillRect(gameSize[0] * blockSize, y * blockSize, blockSize, blockSize);
+    }
+}
+
+function clearMap(){
+    ctx.clearRect(0, 0, cWidth, cHeight);
+}
+
+function checkForCrash(){
+    if(snake.getHead().x <= 0 || snake.getHead().x >= gameSize[0] || snake.getHead().y <= 0 || snake.getHead().y >= gameSize[1]){
+        return true;
+    }
+
+    let snakeTail = snake.getTail();
+    let crash = false;
+    snakeTail.map((element, index) => {
+        if(index !== snakeTail.length - 1){
+            if(element.x === snake.getHead().x && element.y === snake.getHead().y) crash = true;
+        };
+    })
+    return crash;
+}
 
 function updateGame() {
-    snake1.move();
+    snake.move();
+
+    if(checkForCrash()){
+        game.playPause();
+        alert(`
+            Вы проиграли =(
+            Ваш результат: ${score}!
+        `);
+    }
+
+    if(snake.getHead().x === apple.x && snake.getHead().y === apple.y){
+        snake.eat();
+        apple.setPosition(snake.getTail());
+        score++;
+    }
 }
 
 function drawGame() {
-    ctx.clearRect(0, 0, cWidth, cHeight);
-    snake1.draw();
+    clearMap();
+    drawBorder();
+    snake.draw();
+    apple.draw();
 }
 
 function keydown(event) {
-    snake1.changeDirection(event.keyCode);
+    if(event.keyCode === 32){
+        game.playPause();
+    }else{
+        snake.changeDirection(event.keyCode);
+    }
 }
 
-let game = new GameLoop(updateGame, drawGame, 10);
-window.addEventListener("keydown", keydown, false);
+function newGame(){
+    game = new GameLoop(updateGame, drawGame, 5);
+    snake = new Snake({
+        startX: 1,
+        startY: 10,
+        color: '#00cc44',
+        size: blockSize
+    });
+
+    apple = new Apple(blockSize);
+    apple.setPosition(snake.getTail());
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("keydown", keydown, false);
+    document.addEventListener("resize", setGameSize);
+    setGameSize();
+    newGame();
+});
+

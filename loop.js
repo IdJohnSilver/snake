@@ -1,7 +1,10 @@
 let GameLoop = function (update, draw, maxFPS) {
     let lastRender = 0;
+    let gameId;
+    let state = 'pause';
 
     function loop(timestamp) {
+        if(state === 'pause') return;
         let progress = timestamp - lastRender;
         let browserFps = 1000 / progress;
 
@@ -13,8 +16,19 @@ let GameLoop = function (update, draw, maxFPS) {
         update(progress);
         draw();
         lastRender = timestamp;
-        window.requestAnimationFrame(loop);
+        gameId = window.requestAnimationFrame(loop);
     }
 
-    window.requestAnimationFrame(loop);
+    gameId = window.requestAnimationFrame(loop);
+
+    return {
+        playPause: function(){
+            if(state === 'pause'){
+                state = 'play';
+                gameId = window.requestAnimationFrame(loop);
+            }else{
+                state = 'pause';
+            }
+        }
+    }
 }

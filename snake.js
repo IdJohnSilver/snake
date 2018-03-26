@@ -1,48 +1,68 @@
-let Snake = function(startX, startY, color){
-    this.speedX = 10;
+let Snake = function (params) {
+    this.speedX = 1;
     this.speedY = 0;
+    this.lastTailPosition = null;
+    this.startX = parseInt(params.startX);
+    this.startY = parseInt(params.startY);
     this.tail = [
-        {x: startX - 20, y: startY},
-        {x: startX - 10, y: startY},
-        {x: startX, y: startY}
+        { x: this.startX, y: this.startY },
+        { x: this.startX + 1, y: this.startY },
+        { x: this.startX + 2, y: this.startY }
     ];
-    this.draw = function(){
+
+    this.draw = function () {
         this.tail.map(currentElement => {
-            ctx.fillRect(currentElement.x, currentElement.y, 10, 10);
-            ctx.fillStyle = color;
+            ctx.fillStyle = params.color;
+            ctx.fillRect(currentElement.x * params.size, currentElement.y * params.size, params.size, params.size);
         })
-    },
-    this.move = function(){
-        this.tail.map((currentElement, index) => {
-            if(index === this.tail.length - 1){ //snake head
-                currentElement.x += this.speedX;
-                currentElement.y += this.speedY;
-            }else{
-                let nextElement = this.tail[index+1];
-                currentElement.x = nextElement.x;
-                currentElement.y = nextElement.y;
+    };
+
+    this.move = function () {
+        this.lastTailPosition = this.tail[0];
+        this.tail = this.tail.map((currentElement, index) => {
+            if (index === this.tail.length - 1) { //snake head
+                return { x: parseInt(currentElement.x) + this.speedX, y: parseInt(currentElement.y) + this.speedY }
+            } else {
+                let nextElement = this.tail[index + 1];
+                return { x: parseInt(nextElement.x), y: parseInt(nextElement.y) }
             }
         })
-        
-    },
-    this.changeDirection = function(key){
+    };
+
+    this.getHead = function () {
+        return this.tail[this.tail.length - 1];
+    };
+
+    this.eat = function () {
+        this.tail.unshift(this.lastTailPosition);
+    };
+
+    this.changeDirection = function (key) {
         switch (key) {
             case 68: //right
-                this.speedX = 10;
+                if (this.speedX === -1) return;
+                this.speedX = 1;
                 this.speedY = 0;
                 break;
             case 65: //left
-                this.speedX = -10;
+                if (this.speedX === 1) return;
+                this.speedX = -1;
                 this.speedY = 0;
                 break;
             case 87: //up
+                if (this.speedY === 1) return;
                 this.speedX = 0;
-                this.speedY = -10;
+                this.speedY = -1;
                 break;
             case 83: //down
+                if (this.speedY === -1) return;
                 this.speedX = 0;
-                this.speedY = 10;
+                this.speedY = 1;
                 break;
         }
-    }
+    };
+
+    this.getTail = function () {
+        return this.tail.slice();
+    };
 }
