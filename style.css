@@ -1,13 +1,30 @@
-html, body {
+html, body, .gameContainer {
     margin: 0;
     padding: 0;
     height: 100%;
     width: 100%;
 }
-  
+
+.gameContainer{
+    background: #7691a9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+}
+
 canvas {
     background: #000;
-    height: 100%;
-    width: 100%;
-    display: block
+    height: 600px;
+    width: 800px;
+    display: block;
+}
+
+#message{
+    font-size: 26px;
+    font-weight: 700;
+    color: #ffffff;
+    position: absolute;
+    top: 40px;
 }

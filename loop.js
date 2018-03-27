@@ -29,6 +29,12 @@ let GameLoop = function (update, draw, maxFPS) {
             }else{
                 state = 'pause';
             }
+        },
+        getState: function(){
+            return state;
+        },
+        upSpeed: function(){
+            maxFPS++;
         }
     }
 }
