@@ -28,3 +28,11 @@ canvas {
     position: absolute;
     top: 40px;
 }
+
+#score{
+    font-size: 26px;
+    font-weight: 700;
+    color: #ffffff;
+    position: absolute;
+    top: 100px;
+}

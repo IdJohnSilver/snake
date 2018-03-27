@@ -8,6 +8,7 @@ let game;
 let gameSize = [20, 15];
 let blockSize = 20;
 let score = 0;
+let highScore;
 
 function setGameSize() {
     cWidth = canvas.width;
@@ -57,7 +58,7 @@ function updateGame() {
 
     if (checkForCrash()) {
         game.playPause();
-        alert(`Your score: ${score}!`);
+        setNewHighScore(score);
         newGame();
         document.getElementById('message').innerText = 'Press "Space" to start new game!';
     }
@@ -91,6 +92,7 @@ function keydown(event) {
 }
 
 function newGame() {
+    score = 0;
     game = new GameLoop(updateGame, drawGame, 10);
     snake = new Snake({
         startX: 1,
@@ -103,7 +105,25 @@ function newGame() {
     apple.setPosition(snake.getTail());
 }
 
+function setNewHighScore(userScore){
+    if(!highScore || userScore > highScore.point){
+        let userName = prompt(`Congratulations! You set new highscore =) \nPlease enter your name.`);
+        Cookie.set('highscore', JSON.stringify({point: userScore, name: userName}), 365);
+        showHighScore();
+    }
+}
+
+function showHighScore(){
+    try {
+        highScore = JSON.parse(Cookie.get('highscore'));
+    } catch (error) {}
+    if(highScore){
+        document.getElementById('score').innerText = `High score: ${highScore.name} - ${highScore.point} points`;
+    }
+} 
+
 document.addEventListener("DOMContentLoaded", function () {
+    showHighScore();
     document.addEventListener("keydown", keydown, false);
     document.addEventListener("resize", setGameSize);
     setGameSize();
