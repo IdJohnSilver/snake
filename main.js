@@ -17,7 +17,6 @@ function setGameSize() {
     } else {
         blockSize = Math.floor(cWidth / gameSize[0]);
     }
-    console.log(blockSize);
 }
 
 function drawBorder() {
