@@ -1,6 +1,7 @@
 let Apple = function (blockSize) {
     this.x = null;
     this.y = null;
+    this.z = null;
 
     this.setPosition = function (snakeTail) {
         let snakeMap = [];
